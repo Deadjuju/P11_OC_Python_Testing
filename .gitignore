@@ -1,7 +1,23 @@
+# Environments
+.env
+.venv
+env
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+Scripts
 bin
-include
 lib
+pyvenv.cfg
+
+# Git
+.git
+.git/
+
+# Other
+include
 .Python
 tests/
-.envrc
 __pycache__
