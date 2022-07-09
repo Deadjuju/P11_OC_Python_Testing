@@ -40,7 +40,7 @@ def show_summary():
     if club_to_log is None:
         error_login_message = f"Mail -- {escape(user_mail)} -- Sorry, that email wasn't found."
         flash(error_login_message)
-        return render_template('index.html')
+        return redirect(url_for('index'))
     return render_template('welcome.html', club=club_to_log, competitions=competitions)
 
 
