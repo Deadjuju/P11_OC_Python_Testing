@@ -4,6 +4,9 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 from markupsafe import escape
 
 
+PLACES_LIMIT_PER_COMPETITION: int = 12
+
+
 def load_clubs():
     with open('clubs.json') as c:
          list_of_clubs = json.load(c)['clubs']
@@ -49,7 +52,12 @@ def book(competition,club):
     foundClub = [c for c in clubs if c['name'] == club][0]
     foundCompetition = [c for c in competitions if c['name'] == competition][0]
     if foundClub and foundCompetition:
-        return render_template('booking.html', club=foundClub, competition=foundCompetition)
+        return render_template(
+            'booking.html',
+            club=foundClub,
+            competition=foundCompetition,
+            limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
+        )
     else:
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=club, competitions=competitions)
@@ -66,7 +74,16 @@ def purchasePlaces():
         flash('The club does not have enough points.')
         return render_template('welcome.html', club=club, competitions=competitions)
 
-    competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-places_required
+    if places_required > PLACES_LIMIT_PER_COMPETITION:
+        flash(f'You cannot buy more than {PLACES_LIMIT_PER_COMPETITION} places per competition.')
+        return render_template(
+            template_name_or_list='booking.html',
+            club=club,
+            competition=competition,
+            limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
+        )
+
+    competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
 
