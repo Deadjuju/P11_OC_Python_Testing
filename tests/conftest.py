@@ -31,11 +31,19 @@ mocker_competitions = [
         {
             "name": "Spring Festival",
             "date": "2020-03-27 10:00:00",
-            "numberOfPlaces": "25"
+            "numberOfPlaces": "25",
+            "is_date_not_yet_passed": False
         },
         {
             "name": "Fall Classic",
             "date": "2020-10-22 13:30:00",
-            "numberOfPlaces": "13"
+            "numberOfPlaces": "13",
+            "is_date_not_yet_passed": False
+        },
+        {
+            "name": "Super Smash Force",
+            "date": "3000-10-22 13:30:00",
+            "numberOfPlaces": "18",
+            "is_date_not_yet_passed": True
         }
     ]
