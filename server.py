@@ -103,6 +103,7 @@ def purchasePlaces():
             limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
         )
 
+    club['points'] = int(club['points']) - places_required
     competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
