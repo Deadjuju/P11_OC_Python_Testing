@@ -1,5 +1,4 @@
 import json
-import pprint
 
 from flask import Flask, render_template, request, redirect, flash, url_for
 from markupsafe import escape
@@ -57,11 +56,21 @@ def show_summary():
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
-    found_club = [c for c in clubs if c['name'] == club][0]
-    found_competition = [c for c in competitions if c['name'] == competition][0]
+    try:
+        found_club = [c for c in clubs if c['name'] == club][0]
+    except IndexError:
+        flash("You don't exist, sorry.")
+        return render_template('index.html')
+    try:
+        found_competition = [c for c in competitions if c['name'] == competition][0]
+    except IndexError:
+        flash("This competition does not exist.")
+        return render_template('index.html')
+
     if not found_competition["is_date_not_yet_passed"]:
         flash("This event has already passed.")
         return render_template('welcome.html', club=club, competitions=competitions)
+
     if found_club and found_competition:
         return render_template(
             'booking.html',
