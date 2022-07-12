@@ -1,7 +1,10 @@
 import json
+import pprint
 
 from flask import Flask, render_template, request, redirect, flash, url_for
 from markupsafe import escape
+
+from utils import is_date_not_already_past
 
 
 PLACES_LIMIT_PER_COMPETITION: int = 12
@@ -16,6 +19,11 @@ def load_clubs():
 def load_competitions():
     with open('competitions.json') as comps:
          list_of_competitions = json.load(comps)['competitions']
+
+         # Add for each competition if it has not yet passed
+         for competition in list_of_competitions:
+             competition["is_date_not_yet_passed"] = is_date_not_already_past(competition["date"])
+
          return list_of_competitions
 
 
@@ -48,14 +56,17 @@ def show_summary():
 
 
 @app.route('/book/<competition>/<club>')
-def book(competition,club):
-    foundClub = [c for c in clubs if c['name'] == club][0]
-    foundCompetition = [c for c in competitions if c['name'] == competition][0]
-    if foundClub and foundCompetition:
+def book(competition, club):
+    found_club = [c for c in clubs if c['name'] == club][0]
+    found_competition = [c for c in competitions if c['name'] == competition][0]
+    if not found_competition["is_date_not_yet_passed"]:
+        flash("This event has already passed.")
+        return render_template('welcome.html', club=club, competitions=competitions)
+    if found_club and found_competition:
         return render_template(
             'booking.html',
-            club=foundClub,
-            competition=foundCompetition,
+            club=found_club,
+            competition=found_competition,
             limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
         )
     else:
