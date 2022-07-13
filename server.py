@@ -3,7 +3,7 @@ import json
 from flask import Flask, render_template, request, redirect, flash, url_for
 from markupsafe import escape
 
-from utils import is_date_not_already_past
+from utils import is_date_not_already_past, get_club_by_key, ClubNotFoundError
 
 
 PLACES_LIMIT_PER_COMPETITION: int = 12
@@ -32,22 +32,21 @@ app.secret_key = 'something_special'
 competitions = load_competitions()
 clubs = load_clubs()
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
 
-@app.route('/showSummary',methods=['POST'])
+@app.route('/showSummary', methods=['POST'])
 def show_summary():
     """
     Log a club
     """
-    club_to_log = None
     user_mail = request.form['email']
-    for club in clubs:
-        if club['email'] == user_mail:
-            club_to_log = club
-    if club_to_log is None:
+    try:
+        club_to_log = get_club_by_key(clubs, user_mail, key="email")
+    except ClubNotFoundError:
         error_login_message = f"Mail -- {escape(user_mail)} -- Sorry, that email wasn't found."
         flash(error_login_message)
         return redirect(url_for('index'))
@@ -57,10 +56,11 @@ def show_summary():
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
     try:
-        found_club = [c for c in clubs if c['name'] == club][0]
-    except IndexError:
+        found_club = get_club_by_key(clubs, club, key="name")
+    except ClubNotFoundError:
         flash("You don't exist, sorry.")
         return render_template('index.html')
+
     try:
         found_competition = [c for c in competitions if c['name'] == competition][0]
     except IndexError:
@@ -85,8 +85,10 @@ def book(competition, club):
 
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
+    club_name = request.form['club']
+    club = get_club_by_key(clubs, club_name, key="name")
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    club = [c for c in clubs if c['name'] == request.form['club']][0]
+
     current_club_points = int(club['points'])
     places_required = int(request.form['places'])
 
