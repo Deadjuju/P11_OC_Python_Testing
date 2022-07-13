@@ -62,3 +62,24 @@ mocker_competitions = [
             "is_date_not_yet_passed": True
         }
     ]
+
+
+@pytest.fixture
+def clubs():
+    return [
+        {
+            'name': 'Simply Lift',
+            'email': 'john@simplylift.co',
+            'points': '13'
+        },
+        {
+            'name': 'Iron Temple',
+            'email': 'admin@irontemple.com',
+            'points': '4'
+        },
+        {
+            'name': 'She Lifts',
+            'email': 'kate@shelifts.co.uk',
+            'points': '12'
+        }
+    ]
