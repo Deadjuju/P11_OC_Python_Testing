@@ -1,3 +1,4 @@
+from flask import template_rendered
 import pytest
 
 from server import app
@@ -7,6 +8,20 @@ from server import app
 def client():
     with app.test_client() as client:
         yield client
+
+
+@pytest.fixture
+def captured_templates():
+    recorded = []
+
+    def record(sender, template, context, **extra):
+        recorded.append((template, context))
+
+    template_rendered.connect(record, app)
+    try:
+        yield recorded
+    finally:
+        template_rendered.disconnect(record, app)
 
 
 mocker_clubs = [
