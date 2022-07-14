@@ -92,7 +92,7 @@ def purchasePlaces():
     competition = get_competition(competitions, request.form['competition'])
 
     current_club_points = int(club['points'])
-    current_competitions_places = int(club['numberOfPlaces'])
+    current_competitions_places = int(competition['numberOfPlaces'])
     places_required = int(request.form['places'])
 
     if places_required > current_club_points:
