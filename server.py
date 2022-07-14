@@ -3,7 +3,7 @@ import json
 from flask import Flask, render_template, request, redirect, flash, url_for
 from markupsafe import escape
 
-from utils import is_date_not_already_past, get_club_by_key, ClubNotFoundError
+from utils import is_date_not_already_past, get_club_by_key, get_competition,ClubNotFoundError, CompetitionNotFoundError
 
 
 PLACES_LIMIT_PER_COMPETITION: int = 12
@@ -62,8 +62,10 @@ def book(competition, club):
         return render_template('index.html')
 
     try:
-        found_competition = [c for c in competitions if c['name'] == competition][0]
-    except IndexError:
+        found_competition = get_competition(competitions, competition)
+        print("*" * 80)
+        print(found_competition)
+    except CompetitionNotFoundError:
         flash("This competition does not exist.")
         return render_template('index.html')
 
@@ -83,13 +85,14 @@ def book(competition, club):
         return render_template('welcome.html', club=club, competitions=competitions)
 
 
-@app.route('/purchasePlaces',methods=['POST'])
+@app.route('/purchasePlaces', methods=['POST'])
 def purchasePlaces():
     club_name = request.form['club']
     club = get_club_by_key(clubs, club_name, key="name")
-    competition = [c for c in competitions if c['name'] == request.form['competition']][0]
+    competition = get_competition(competitions, request.form['competition'])
 
     current_club_points = int(club['points'])
+    current_competitions_places = int(club['numberOfPlaces'])
     places_required = int(request.form['places'])
 
     if places_required > current_club_points:
