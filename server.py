@@ -3,7 +3,13 @@ import json
 from flask import Flask, render_template, request, redirect, flash, url_for
 from markupsafe import escape
 
-from utils import is_date_not_already_past, get_club_by_key, get_competition,ClubNotFoundError, CompetitionNotFoundError
+from utils import (is_date_not_already_past,
+                   get_club_by_key,
+                   get_competition,
+                   update_points_or_places,
+                   ClubNotFoundError,
+                   CompetitionNotFoundError,
+                   NegativeResultError)
 
 
 PLACES_LIMIT_PER_COMPETITION: int = 12
@@ -63,8 +69,6 @@ def book(competition, club):
 
     try:
         found_competition = get_competition(competitions, competition)
-        print("*" * 80)
-        print(found_competition)
     except CompetitionNotFoundError:
         flash("This competition does not exist.")
         return render_template('index.html')
@@ -108,8 +112,18 @@ def purchasePlaces():
             limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
         )
 
-    club['points'] = int(club['points']) - places_required
-    competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
+    try:
+        competition['numberOfPlaces'] = update_points_or_places(places_required, current_competitions_places)
+    except NegativeResultError:
+        flash('This competition does not have as many places available.')
+        return render_template(
+            template_name_or_list='booking.html',
+            club=club,
+            competition=competition,
+            limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
+        )
+
+    club['points'] = update_points_or_places(places_required, current_club_points)
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
 
