@@ -1,8 +1,12 @@
 from datetime import datetime, timedelta
 
 import pytest
-from utils import get_club_by_key, is_date_not_already_past, ClubNotFoundError
-from tests.conftest import clubs
+from utils import (get_club_by_key,
+                   get_competition,
+                   is_date_not_already_past,
+                   ClubNotFoundError,
+                   CompetitionNotFoundError)
+from tests.conftest import clubs, competitions
 
 tomorrow = (datetime.now() + timedelta(1)).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -49,3 +53,20 @@ def test_fail_to_find_club_with_bad_name(clubs):
     invalid_name = "Iron Maiden"
     with pytest.raises(ClubNotFoundError) as e_info:
         club = get_club_by_key(clubs, invalid_name, "name")
+
+
+def test_get_competition(competitions):
+    expected_competition = {
+        "name": "Spring Festival",
+        "date": "2020-03-27 10:00:00",
+        "numberOfPlaces": "25",
+    }
+    valid_competition_name = "Spring Festival"
+    competition = get_competition(competitions, valid_competition_name)
+    assert competition == expected_competition
+
+
+def test_fail_to_get_competition_with_invalid_name(competitions):
+    invalid_name = "Springfield"
+    with pytest.raises(CompetitionNotFoundError):
+        competition = get_competition(competitions, invalid_name)
