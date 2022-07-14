@@ -4,8 +4,10 @@ import pytest
 from utils import (get_club_by_key,
                    get_competition,
                    is_date_not_already_past,
+                   update_points_or_places,
                    ClubNotFoundError,
-                   CompetitionNotFoundError)
+                   CompetitionNotFoundError,
+                   NegativeResultError)
 from tests.conftest import clubs, competitions
 
 tomorrow = (datetime.now() + timedelta(1)).strftime("%Y-%m-%d %H:%M:%S")
@@ -70,3 +72,13 @@ def test_fail_to_get_competition_with_invalid_name(competitions):
     invalid_name = "Springfield"
     with pytest.raises(CompetitionNotFoundError):
         competition = get_competition(competitions, invalid_name)
+
+
+def test_success_to_update_points_or_places():
+    assert update_points_or_places(places_required=4, current_points_or_places=7) == 3
+    assert update_points_or_places(places_required=1, current_points_or_places=9) == 8
+
+
+def test_fail_to_update_points_with_negative_result():
+    with pytest.raises(NegativeResultError):
+        update_points_or_places(places_required=4, current_points_or_places=3)
