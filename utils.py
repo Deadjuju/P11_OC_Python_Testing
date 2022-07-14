@@ -11,8 +11,13 @@ class CompetitionNotFoundError(Exception):
         super().__init__(message)
 
 
+class NegativeResultError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+
 def get_club_by_key(club_list: list[dict], club_info: str, key: str) -> dict:
-    """find a club
+    """ find a club
 
     Args:
         club_list (list): list of registered clubs
@@ -30,7 +35,7 @@ def get_club_by_key(club_list: list[dict], club_info: str, key: str) -> dict:
 
 
 def get_competition(competitions_list: list[dict], competition_name: str) -> dict:
-    """find a competition
+    """ find a competition
 
     Args:
         competitions_list (list): list of registered competitions
@@ -48,7 +53,7 @@ def get_competition(competitions_list: list[dict], competition_name: str) -> dic
 
 
 def is_date_not_already_past(date: str) -> bool:
-    """determines if a date has not yet passed
+    """ determines if a date has not yet passed
 
     Args:
         date (str): date to compare
@@ -58,3 +63,14 @@ def is_date_not_already_past(date: str) -> bool:
     """
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return bool(date > today)
+
+
+def update_points_or_places(places_required: int, current_points_or_places: int) -> int:
+    """
+    Updates the number of points of a club or the number of places remaining in a competition,
+    if the number is not positive raise an exception.
+    """
+    update_result = current_points_or_places - places_required
+    if update_result < 0:
+        raise NegativeResultError("Negative values are not allowed")
+    return update_result
