@@ -84,6 +84,22 @@ def init_a_club_if_not_in_dict(club_places_per_competition: dict, club_name: str
         club_places_per_competition[club_name] = {}
 
 
+def _update_club_competitions_and_places(club_competitions_and_places,
+                                         competition_name,
+                                         current_places_competition,
+                                         required_places):
+    """ Update the dictionnary
+
+    Args:
+        club_places_per_competition (dict):
+        club_name (str): name of current club
+        competition_name (str): name of current competition
+        required_places (int): number of places requested
+    """
+
+    club_competitions_and_places[competition_name] = (current_places_competition + required_places)
+
+
 def check_places_number_for_a_competition_and_update(club_places_per_competition: dict,
                                                      club_name: str,
                                                      competition_name: str,
@@ -107,5 +123,8 @@ def check_places_number_for_a_competition_and_update(club_places_per_competition
     if current_places_competition + required_places > 12:
         return False
 
-    club_competitions_and_places[competition_name] = (current_places_competition + required_places)
+    _update_club_competitions_and_places(club_competitions_and_places,
+                                         competition_name,
+                                         current_places_competition,
+                                         required_places)
     return True
