@@ -1,13 +1,14 @@
+from http import HTTPStatus
 from tests.conftest import client, captured_templates
 
 
-def test_should_status_code_ok(client):
+def test_should_connect_to_index(client):
     response = client.get('/')
-    assert response.status_code == 200
+    assert response.status_code == HTTPStatus.OK
     assert b'Welcome to the GUDLFT Registration Portal!' in response.data
 
 
-def test_template_index(client, captured_templates):
+def test_should_template_name_be_index(client, captured_templates):
     expected_template_name = "index.html"
     response = client.get('/')
     template, context = captured_templates[0]
