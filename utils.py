@@ -74,3 +74,38 @@ def update_points_or_places(places_required: int, current_points_or_places: int)
     if update_result < 0:
         raise NegativeResultError("Negative values are not allowed")
     return update_result
+
+
+def init_a_club_if_not_in_dict(club_places_per_competition: dict, club_name: str):
+    """
+    add a club in club_places_per_competition if it is not yet present
+    """
+    if club_places_per_competition.get(club_name) is None:
+        club_places_per_competition[club_name] = {}
+
+
+def check_places_number_for_a_competition_and_update(club_places_per_competition: dict,
+                                                     club_name: str,
+                                                     competition_name: str,
+                                                     required_places: int) -> bool:
+    """ Checks if the number of places reserved for a competition is less than or equal to 12.
+    The club_places_per_competition dictionary is updated if True
+
+    Args:
+        club_places_per_competition (dict):
+        club_name (str): name of current club
+        competition_name (str): name of current competition
+        required_places (int): number of places requested
+
+    Returns:
+        bool: False if places > 12, else True
+    """
+
+
+    club_competitions_and_places: dict = club_places_per_competition.get(club_name)
+    current_places_competition = club_competitions_and_places.get(competition_name, 0)
+    if current_places_competition + required_places > 12:
+        return False
+
+    club_competitions_and_places[competition_name] = (current_places_competition + required_places)
+    return True

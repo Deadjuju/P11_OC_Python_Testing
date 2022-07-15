@@ -3,9 +3,11 @@ import json
 from flask import Flask, render_template, request, redirect, flash, url_for
 from markupsafe import escape
 
-from utils import (is_date_not_already_past,
+from utils import (check_places_number_for_a_competition_and_update,
                    get_club_by_key,
                    get_competition,
+                   init_a_club_if_not_in_dict,
+                   is_date_not_already_past,
                    update_points_or_places,
                    ClubNotFoundError,
                    CompetitionNotFoundError,
@@ -37,6 +39,7 @@ app.secret_key = 'something_special'
 
 competitions = load_competitions()
 clubs = load_clubs()
+club_places_per_competition = {}
 
 
 @app.route('/')
@@ -56,6 +59,7 @@ def show_summary():
         error_login_message = f"Mail -- {escape(user_mail)} -- Sorry, that email wasn't found."
         flash(error_login_message)
         return redirect(url_for('index'))
+    init_a_club_if_not_in_dict(club_places_per_competition, club_to_log['name'])
     return render_template('welcome.html', club=club_to_log, competitions=competitions)
 
 
@@ -94,6 +98,7 @@ def purchasePlaces():
     club_name = request.form['club']
     club = get_club_by_key(clubs, club_name, key="name")
     competition = get_competition(competitions, request.form['competition'])
+    competition_name = competition['name']
 
     current_club_points = int(club['points'])
     current_competitions_places = int(competition['numberOfPlaces'])
@@ -113,7 +118,7 @@ def purchasePlaces():
         )
 
     try:
-        competition['numberOfPlaces'] = update_points_or_places(places_required, current_competitions_places)
+        new_competition_places = update_points_or_places(places_required, current_competitions_places)
     except NegativeResultError:
         flash('This competition does not have as many places available.')
         return render_template(
@@ -123,9 +128,26 @@ def purchasePlaces():
             limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
         )
 
-    club['points'] = update_points_or_places(places_required, current_club_points)
-    flash('Great-booking complete!')
-    return render_template('welcome.html', club=club, competitions=competitions)
+    is_places_for_competition_greater_than_twelve = check_places_number_for_a_competition_and_update(
+        club_places_per_competition,
+        club_name,
+        competition_name,
+        places_required
+    )
+
+    if is_places_for_competition_greater_than_twelve:
+        competition['numberOfPlaces'] = new_competition_places
+        club['points'] = update_points_or_places(places_required, current_club_points)
+        flash('Great-booking complete!')
+        return render_template('welcome.html', club=club, competitions=competitions)
+
+    flash(f'You cannot buy more than {PLACES_LIMIT_PER_COMPETITION} places per competition.')
+    return render_template(
+        template_name_or_list='booking.html',
+        club=club,
+        competition=competition,
+        limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
+    )
 
 
 # TODO: Add route for points display
