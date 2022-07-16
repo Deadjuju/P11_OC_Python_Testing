@@ -63,24 +63,35 @@ def show_summary():
     return render_template('welcome.html', club=club_to_log, competitions=competitions)
 
 
-@app.route('/book/<competition>/<club>')
-def book(competition, club):
+@app.route('/book/<competition>/<club>', methods=['GET'])
+def book(competition: str, club: str):
+    """ Booking page
+
+    Args:
+        competition (str): competition name
+        club (str): club name
+    """
+
+    # invalid club
     try:
         found_club = get_club_by_key(clubs, club, key="name")
     except ClubNotFoundError:
         flash("You don't exist, sorry.")
         return render_template('index.html')
 
+    # invalid competition
     try:
         found_competition = get_competition(competitions, competition)
     except CompetitionNotFoundError:
         flash("This competition does not exist.")
         return render_template('index.html')
 
+    # past competition
     if not found_competition["is_date_not_yet_passed"]:
         flash("This event has already passed.")
         return render_template('welcome.html', club=club, competitions=competitions)
 
+    # everything is OK
     if found_club and found_competition:
         return render_template(
             'booking.html',
