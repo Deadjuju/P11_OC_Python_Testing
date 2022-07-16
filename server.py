@@ -105,7 +105,10 @@ def book(competition: str, club: str):
 
 
 @app.route('/purchasePlaces', methods=['POST'])
-def purchasePlaces():
+def purchase_places():
+    """
+    Purchase of places with control
+    """
     club_name = request.form['club']
     club = get_club_by_key(clubs, club_name, key="name")
     competition = get_competition(competitions, request.form['competition'])
@@ -115,10 +118,12 @@ def purchasePlaces():
     current_competitions_places = int(competition['numberOfPlaces'])
     places_required = int(request.form['places'])
 
+    # the number of places requested is greater than the total number of places for the club
     if places_required > current_club_points:
         flash('The club does not have enough points.')
         return render_template('welcome.html', club=club, competitions=competitions)
 
+    # number of places requested exceeds the number of places per competition
     if places_required > PLACES_LIMIT_PER_COMPETITION:
         flash(f'You cannot buy more than {PLACES_LIMIT_PER_COMPETITION} places per competition.')
         return render_template(
@@ -131,6 +136,7 @@ def purchasePlaces():
     try:
         new_competition_places = update_points_or_places(places_required, current_competitions_places)
     except NegativeResultError:
+        # not enough places available
         flash('This competition does not have as many places available.')
         return render_template(
             template_name_or_list='booking.html',
@@ -138,20 +144,21 @@ def purchasePlaces():
             competition=competition,
             limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
         )
-
-    is_places_for_competition_greater_than_twelve = check_places_number_for_a_competition_and_update(
+    is_places_for_competition_less_or_equal_than_limit: bool = check_places_number_for_a_competition_and_update(
         club_places_per_competition,
         club_name,
         competition_name,
         places_required
     )
 
-    if is_places_for_competition_greater_than_twelve:
+    if is_places_for_competition_less_or_equal_than_limit:
+        # places successfully buyed
         competition['numberOfPlaces'] = new_competition_places
         club['points'] = update_points_or_places(places_required, current_club_points)
         flash('Great-booking complete!')
         return render_template('welcome.html', club=club, competitions=competitions)
 
+    # total number of places requested exceeds the authorized limit
     flash(f'You cannot buy more than {PLACES_LIMIT_PER_COMPETITION} places per competition.')
     return render_template(
         template_name_or_list='booking.html',
