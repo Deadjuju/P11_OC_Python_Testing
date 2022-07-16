@@ -58,7 +58,7 @@ def show_summary():
     except ClubNotFoundError:
         error_login_message = f"Mail -- {escape(user_mail)} -- Sorry, that email wasn't found."
         flash(error_login_message)
-        return redirect(url_for('index'))
+        return render_template('index.html')
     init_a_club_if_not_in_dict(club_places_per_competition, club_to_log['name'])
     return render_template('welcome.html', club=club_to_log, competitions=competitions)
 
