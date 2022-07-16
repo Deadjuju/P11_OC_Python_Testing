@@ -104,3 +104,27 @@ def competitions():
             "numberOfPlaces": "18"
         }
     ]
+
+
+@pytest.fixture
+def valid_club(clubs):
+    return clubs[0]
+
+
+@pytest.fixture
+def invalid_club():
+    return {
+        'name': 'Bad Name',
+        'email': 'totally@invented.mail',
+        'points': '13'
+    }
+
+
+@pytest.fixture
+def past_competition(competitions):
+    return competitions[0]
+
+
+@pytest.fixture
+def future_competition(competitions):
+    return competitions[2]
