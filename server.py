@@ -173,6 +173,9 @@ def purchase_places():
 
 @app.route('/logout')
 def logout():
+    """
+    Logout the club
+    """
     return redirect(url_for('index'))
 
 
