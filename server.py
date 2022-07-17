@@ -169,6 +169,11 @@ def purchase_places():
 
 
 # TODO: Add route for points display
+@app.route('/points-display-board', methods=['GET'])
+def points_display_board():
+    return render_template('display-board.html',
+                           clubs=clubs,
+                           competitions=competitions)
 
 
 @app.route('/logout')
