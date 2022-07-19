@@ -9,20 +9,20 @@
 
     {% with messages = get_flashed_messages() %}
     {% if messages %}
-        <ul>
+        <ul class="message">
        {% for message in messages %}
             <li>{{ message }}</li>
         {% endfor %}
        </ul>
     {% endif %}
-    Points available: {{ club['points'] }}
+    Points available: <span class="club-points">{{ club['points'] }}</span>
     <h3>Competitions:</h3>
     <ul>
         {% for comp in competitions%}
         <li>
             {{ comp['name'] }}<br />
             Date: {{ comp['date'] }}</br>
-            Number of Places: {{ comp['numberOfPlaces' ]}}
+            Number of Places: <span class="competition-places">{{ comp['numberOfPlaces' ]}}</span>
             {% if (comp['numberOfPlaces']|int > 0) and (comp['is_date_not_yet_passed']) %}
                 <a href="{{ url_for('book', competition=comp['name'], club=club['name']) }}" class="book-places-btn">
                     Book Places
