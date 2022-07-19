@@ -24,7 +24,9 @@
             Date: {{ comp['date'] }}</br>
             Number of Places: {{ comp['numberOfPlaces' ]}}
             {% if (comp['numberOfPlaces']|int > 0) and (comp['is_date_not_yet_passed']) %}
-                <a href="{{ url_for('book', competition=comp['name'], club=club['name']) }}">Book Places</a>
+                <a href="{{ url_for('book', competition=comp['name'], club=club['name']) }}" class="book-places-btn">
+                    Book Places
+                </a>
             {%endif%}
         </li>
         <hr/>
