@@ -3,10 +3,11 @@ from http import HTTPStatus
 import server
 from server import PLACES_LIMIT_PER_COMPETITION
 from utils import NegativeResultError
-from tests.conftest import client, mocker_clubs, mocker_competitions, valid_club
+from tests.conftest import client, club_with_many_points, mocker_clubs, mocker_competitions, valid_club
 
 
 club_name = "Simply Lift"
+club_with_many_points_name = "Club With Many Points"
 
 competition = {
     "name": "Spring Festival",
@@ -43,7 +44,7 @@ def test_places_required_greater_than_points_club(client, mocker, valid_club, ca
     assert template.name == expected_template_name
 
 
-def test_places_requested_exceed_places_per_competition(client, mocker, valid_club, captured_templates):
+def test_places_requested_exceed_places_per_competition(client, mocker, club_with_many_points, captured_templates):
     """
     GIVEN a VALID club, a Valid competition & number of places > limit per competition,
     WHEN the user tries to access the view route "book()",
@@ -52,12 +53,12 @@ def test_places_requested_exceed_places_per_competition(client, mocker, valid_cl
 
     mocker.patch.object(server, 'clubs', mocker_clubs)
     mocker.patch.object(server, 'competitions', mocker_competitions)
-    mocker.patch('server.get_club_by_key', return_value=valid_club)
+    mocker.patch('server.get_club_by_key', return_value=club_with_many_points)
 
     places_required = PLACES_LIMIT_PER_COMPETITION + 1
 
     data_to_post = {
-        'club': club_name,
+        'club': club_with_many_points_name,
         'competition': competition['name'],
         'places': places_required,
     }
@@ -72,7 +73,7 @@ def test_places_requested_exceed_places_per_competition(client, mocker, valid_cl
     assert template.name == expected_template_name
 
 
-def test_not_enough_places_available(client, mocker, valid_club, captured_templates):
+def test_required_places_greater_than_places_available(client, mocker, valid_club, captured_templates):
     """
     GIVEN a VALID club, a Valid competition & places available < required places,
     WHEN the user tries to access the view route "book()",
@@ -155,7 +156,7 @@ def test_not_enough_places_available(client, mocker, valid_club, captured_templa
     mocker.patch('server.update_points_or_places', return_value=15)
     mocker.patch('server.check_places_number_for_a_competition_and_update', return_value=False)
 
-    places_required = 10
+    places_required = int(valid_club['points']) // PLACES_LIMIT_PER_COMPETITION
     data_to_post = {
         'club': club_name,
         'competition': competition['name'],
@@ -188,7 +189,7 @@ def test_places_successfully_buyed(client, mocker, valid_club, captured_template
     mocker.patch('server.update_points_or_places', return_value=15)
     mocker.patch('server.check_places_number_for_a_competition_and_update', return_value=True)
 
-    places_required = 10
+    places_required = int(valid_club['points']) // PLACES_LIMIT_PER_COMPETITION
     data_to_post = {
         'club': club_name,
         'competition': competition['name'],
