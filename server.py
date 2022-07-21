@@ -15,6 +15,7 @@ from utils import (check_places_number_for_a_competition_and_update,
 
 
 PLACES_LIMIT_PER_COMPETITION: int = 12
+NUMBERS_OF_POINTS_PER_PLACE: int = 3
 
 
 def load_clubs():
@@ -118,8 +119,13 @@ def purchase_places():
     current_competitions_places = int(competition['numberOfPlaces'])
     places_required = int(request.form['places'])
 
-    # the number of places requested is greater than the total number of places for the club
-    if places_required > current_club_points:
+    print("-" * 500)
+    print(clubs)
+    print("Club: ")
+    print(club)
+    print(f"current_club_points: {current_club_points}")
+    # the number of places requested is greater than the total number of points for the club
+    if places_required * NUMBERS_OF_POINTS_PER_PLACE > current_club_points:
         flash('The club does not have enough points.')
         return render_template('welcome.html', club=club, competitions=competitions)
 
@@ -132,7 +138,6 @@ def purchase_places():
             competition=competition,
             limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
         )
-
     try:
         new_competition_places = update_points_or_places(places_required, current_competitions_places)
     except NegativeResultError:
@@ -154,6 +159,7 @@ def purchase_places():
     if is_places_for_competition_less_or_equal_than_limit:
         # places successfully buyed
         competition['numberOfPlaces'] = new_competition_places
+        places_required *= NUMBERS_OF_POINTS_PER_PLACE
         club['points'] = update_points_or_places(places_required, current_club_points)
         flash('Great-booking complete!')
         return render_template('welcome.html', club=club, competitions=competitions)
