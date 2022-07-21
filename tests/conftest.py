@@ -39,6 +39,11 @@ mocker_clubs = [
         'name': 'She Lifts',
         'email': 'kate@shelifts.co.uk',
         'points': '12'
+    },
+    {
+        'name': 'Club With Many Points',
+        'email': 'i_have_a_lot@of.points',
+        'points': '9999'
     }
 ]
 
@@ -81,6 +86,11 @@ def clubs():
             'name': 'She Lifts',
             'email': 'kate@shelifts.co.uk',
             'points': '12'
+        },
+        {
+            'name': 'Club With Many Points',
+            'email': 'i_have_a_lot@of.points',
+            'points': '9999'
         }
     ]
 
@@ -109,6 +119,11 @@ def competitions():
 @pytest.fixture
 def valid_club(clubs):
     return clubs[0]
+
+
+@pytest.fixture
+def club_with_many_points(clubs):
+    return clubs[3]
 
 
 @pytest.fixture
