@@ -3,7 +3,7 @@ from http import HTTPStatus
 import server
 from server import PLACES_LIMIT_PER_COMPETITION
 from utils import NegativeResultError
-from tests.conftest import client, club_with_many_points, mocker_clubs, mocker_competitions, valid_club
+from tests.conftest import mocker_clubs, mocker_competitions
 
 
 club_name = "Simply Lift"

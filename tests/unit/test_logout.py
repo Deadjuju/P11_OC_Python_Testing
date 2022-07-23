@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from tests.conftest import client, captured_templates
 
 
 def test_should_redirect(client, captured_templates):
