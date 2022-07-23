@@ -28,7 +28,7 @@ def load_competitions():
     with open('competitions.json') as comps:
          list_of_competitions = json.load(comps)['competitions']
 
-         # Add for each competition if it has not yet passed
+         # Add a boolean for each competition if it has not yet passed
          for competition in list_of_competitions:
              competition["is_date_not_yet_passed"] = is_date_not_already_past(competition["date"])
 
@@ -100,9 +100,6 @@ def book(competition: str, club: str):
             competition=found_competition,
             limit_places_per_competition=PLACES_LIMIT_PER_COMPETITION
         )
-    else:
-        flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions)
 
 
 @app.route('/purchasePlaces', methods=['POST'])
@@ -119,11 +116,6 @@ def purchase_places():
     current_competitions_places = int(competition['numberOfPlaces'])
     places_required = int(request.form['places'])
 
-    print("-" * 500)
-    print(clubs)
-    print("Club: ")
-    print(club)
-    print(f"current_club_points: {current_club_points}")
     # the number of places requested is greater than the total number of points for the club
     if places_required * NUMBERS_OF_POINTS_PER_PLACE > current_club_points:
         flash('The club does not have enough points.')
@@ -188,7 +180,3 @@ def logout():
     Logout the club
     """
     return redirect(url_for('index'))
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
