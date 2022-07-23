@@ -1,14 +1,7 @@
 from http import HTTPStatus
 
 import server
-from tests.conftest import (captured_templates,
-                            client,
-                            future_competition,
-                            invalid_club,
-                            mocker_clubs,
-                            mocker_competitions,
-                            past_competition,
-                            valid_club)
+from tests.conftest import mocker_clubs, mocker_competitions
 
 
 def test_book_for_passed_competition(client, mocker, valid_club, past_competition, captured_templates):

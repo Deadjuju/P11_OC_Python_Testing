@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 import server
-from tests.conftest import captured_templates, client, mocker_clubs, mocker_competitions
+from tests.conftest import mocker_clubs, mocker_competitions
 
 
 def test_route_display_board(mocker, client, captured_templates):

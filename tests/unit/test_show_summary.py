@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from server import show_summary
 import server
-from tests.conftest import client, mocker_clubs
+from tests.conftest import mocker_clubs
 
 
 def test_log_with_valid_mail(client, mocker, captured_templates):

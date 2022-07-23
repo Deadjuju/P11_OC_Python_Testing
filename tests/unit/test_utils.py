@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 import pytest
+
 from utils import (check_places_number_for_a_competition_and_update,
                    get_club_by_key,
                    get_competition,
@@ -10,7 +11,6 @@ from utils import (check_places_number_for_a_competition_and_update,
                    ClubNotFoundError,
                    CompetitionNotFoundError,
                    NegativeResultError)
-from tests.conftest import clubs, competitions
 
 tomorrow = (datetime.now() + timedelta(1)).strftime("%Y-%m-%d %H:%M:%S")
 
