@@ -2,31 +2,29 @@ from http import HTTPStatus
 
 from server import show_summary
 import server
-from tests.conftest import mocker_clubs
+from tests.conftest import Templates, Urls, mocker_clubs
 
 
-def test_log_with_valid_mail(client, mocker, captured_templates):
+def test_log_with_valid_mail(client, mocker, captured_templates, valid_club):
     """
     GIVEN a valid mail,
     WHEN club try to log it,
     THEN the club arrives on the "welcome" page.
     """
 
-    valid_mail = "john@simplylift.co"
-    expected_welcome_phrase = f"Welcome, {valid_mail}"
     mocker.patch.object(server, 'clubs', mocker_clubs)
+    valid_mail = valid_club["email"]
 
-    response = client.post('/showSummary', data={"email": valid_mail})
-    assert response.status_code == HTTPStatus.OK
-    assert expected_welcome_phrase in response.data.decode()
-
-    expected_template_name = "welcome.html"
+    response = client.post(Urls.LOGIN.value, data={"email": valid_mail})
     template, context = captured_templates[0]
+
+    assert response.status_code == HTTPStatus.OK
+    assert f"Welcome, {valid_mail}" in response.data.decode()
     assert len(captured_templates) == 1
-    assert template.name == expected_template_name
+    assert template.name == Templates.WELCOME.value
 
 
-def test_log_with_invalid_email(client, mocker, captured_templates):
+def test_log_with_invalid_email(client, mocker, captured_templates, invalid_club):
     """
     GIVEN a invalid mail,
     WHEN club try to log it,
@@ -34,21 +32,19 @@ def test_log_with_invalid_email(client, mocker, captured_templates):
     """
 
     mocker.patch.object(server, 'clubs', mocker_clubs)
-    unknown_user = {"email": "obiwan@jedi.tato"}
-    response = client.post('/showSummary', data=unknown_user)
+
+    response = client.post(Urls.LOGIN.value, data={"email": invalid_club["email"]})
+    template, context = captured_templates[0]
 
     assert response.status_code == HTTPStatus.OK
-
-    expected_template_name = "index.html"
-    template, context = captured_templates[0]
     assert len(captured_templates) == 1
-    assert template.name == expected_template_name
+    assert template.name == Templates.INDEX.value
 
 
-def test_not_allowed_with_get(client, mocker):
+def test_not_allowed_with_get(client):
     """
     GET method is not allowed
     """
 
-    response = client.get("/showSummary")
+    response = client.get(Urls.LOGIN.value)
     assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
