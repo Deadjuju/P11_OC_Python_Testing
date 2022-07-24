@@ -1,7 +1,37 @@
+from enum import Enum
+
 from flask import template_rendered
 import pytest
 
 from server import app
+
+
+class Templates(Enum):
+    """
+    name of templates used
+    """
+    
+    INDEX = "index.html"
+    WELCOME = "welcome.html"
+    BOOKING = "booking.html"
+    DISPLAY_BOARD = "display-board.html"
+
+
+class Urls(Enum):
+    """
+    urls used in the application
+    """
+
+    INDEX = "/"
+    LOGIN = "/showSummary"
+    BOOKING = "/book"
+    PURCHASE_PLACES = "/purchasePlaces"
+    LOGOUT = "/logout"
+    DISPLAY_BOARD = "/points-display-board"
+
+    @classmethod
+    def booking_url(cls, competition: str, club: str) -> str:
+        return f"{cls.BOOKING.value}/{competition}/{club}"
 
 
 @pytest.fixture
