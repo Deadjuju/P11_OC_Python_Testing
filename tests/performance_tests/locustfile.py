@@ -1,6 +1,6 @@
-import pprint
-
 from locust import HttpUser, task
+
+from tests.conftest import Urls
 
 
 club = {
@@ -18,31 +18,38 @@ competition = {
 class SitePerfTest(HttpUser):
 
     def on_start(self):
-        self.client.get("/")
-
-    # def on_stop(self):
-    #     self.client.get("logout")
+        self.client.get(Urls.INDEX.value)
 
     @task
     def index(self):
-        self.client.get("/")
+        self.client.get(Urls.INDEX.value)
 
-    @task(3)
+    @task
+    def login(self):
+        self.client.post(Urls.LOGIN.value, {"email": club['email']})
+
+    @task
+    def bad_login(self):
+        self.client.post(Urls.LOGIN.value, {"email": "wrong_email@mail.com"})
+
+    @task
+    def book(self):
+        self.client.get(Urls.booking_url(competition=competition['name'],
+                                         club=club['name']))
+
+    @task
     def purchase_places(self):
-        self.client.post("showSummary", {"email": club['email']})
-        self.client.get(f"/book/{competition['name']}/{club['name']}")
         data_to_post = {
             'club': club['name'],
             'competition': competition['name'],
             'places': 1,
         }
-        self.client.post('/purchasePlaces', data=data_to_post)
+        self.client.post(Urls.PURCHASE_PLACES.value, data=data_to_post)
 
     @task
     def view_display_board(self):
-        self.client.get("/points-display-board")
+        self.client.get(Urls.DISPLAY_BOARD.value)
 
-    # @task()
-    # def login(self):
-    #     valid_mail = "john@simplylift.co"
-    #     self.client.post("/showSummary", data={'email': valid_mail})
+    @task
+    def logout(self):
+        self.client.get(Urls.LOGOUT.value)
