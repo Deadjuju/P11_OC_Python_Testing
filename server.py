@@ -20,19 +20,18 @@ NUMBERS_OF_POINTS_PER_PLACE: int = 3
 
 def load_clubs():
     with open('clubs.json') as c:
-         list_of_clubs = json.load(c)['clubs']
-         return list_of_clubs
+        list_of_clubs = json.load(c)['clubs']
+        return list_of_clubs
 
 
 def load_competitions():
     with open('competitions.json') as comps:
-         list_of_competitions = json.load(comps)['competitions']
+        list_of_competitions = json.load(comps)['competitions']
 
-         # Add a boolean for each competition if it has not yet passed
-         for competition in list_of_competitions:
-             competition["is_date_not_yet_passed"] = is_date_not_already_past(competition["date"])
-
-         return list_of_competitions
+        # Add a boolean for each competition if it has not yet passed
+        for competition in list_of_competitions:
+            competition["is_date_not_yet_passed"] = is_date_not_already_past(competition["date"])
+            return list_of_competitions
 
 
 app = Flask(__name__)
