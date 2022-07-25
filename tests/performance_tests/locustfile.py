@@ -4,9 +4,9 @@ from tests.conftest import Urls
 
 
 club = {
-    "name":"Simply Lift",
-    "email":"john@simplylift.co",
-    "points":"13"
+    "name": "Simply Lift",
+    "email": "john@simplylift.co",
+    "points": "13"
 }
 competition = {
     "name": "Super Smash Force",
