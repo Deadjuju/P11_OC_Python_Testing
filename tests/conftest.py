@@ -10,7 +10,7 @@ class Templates(Enum):
     """
     name of templates used
     """
-    
+
     INDEX = "index.html"
     WELCOME = "welcome.html"
     BOOKING = "booking.html"
