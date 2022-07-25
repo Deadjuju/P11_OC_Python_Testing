@@ -4,7 +4,6 @@ from tests.conftest import Templates, Urls, mocker_clubs
 import server
 
 
-
 def test_login(client, mocker, captured_templates, valid_club):
     """
     From index page the club can log in with a valid mail and arrives to welcome page

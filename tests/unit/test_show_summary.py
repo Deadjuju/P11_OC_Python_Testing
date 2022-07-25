@@ -1,6 +1,5 @@
 from http import HTTPStatus
 
-from server import show_summary
 import server
 from tests.conftest import Templates, Urls, mocker_clubs
 

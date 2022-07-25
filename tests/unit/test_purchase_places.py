@@ -69,7 +69,11 @@ def test_places_requested_exceed_places_per_competition(client, mocker, club_wit
     assert template.name == Templates.BOOKING.value
 
 
-def test_required_places_greater_than_places_available(client, mocker, valid_club, captured_templates, future_competition):
+def test_required_places_greater_than_places_available(client,
+                                                       mocker,
+                                                       valid_club,
+                                                       captured_templates,
+                                                       future_competition):
     """
     GIVEN a VALID club, a Valid competition & places available < required places,
     WHEN the user tries to access the view route "book()",

@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from tests.conftest import Templates, Urls, mocker_clubs, mocker_competitions
+from tests.conftest import Templates, Urls, mocker_clubs
 import server
 
 

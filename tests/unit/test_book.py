@@ -44,7 +44,6 @@ def test_book_with_invalid_club(client, mocker, invalid_club, future_competition
     assert template.name == Templates.INDEX.value
 
 
-
 def test_book_with_invalid_competition(client, mocker, valid_club, future_competition, captured_templates):
     """
     GIVEN a VALID club & invalid competition,
@@ -84,7 +83,6 @@ def test_book_with_valid_club_and_valid_future_competition(client,
     response = client.get(Urls.booking_url(competition=future_competition['name'],
                                            club=valid_club['name']))
     template, context = captured_templates[0]
-
 
     assert response.status_code == HTTPStatus.OK
     assert len(captured_templates) == 1
