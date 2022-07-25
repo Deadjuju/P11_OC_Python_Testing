@@ -21,7 +21,7 @@ def test_should_false_for_date_in_past():
     """
 
     date_in_past = "2020-03-27 10:00:00"
-    assert is_date_not_already_past(date_in_past) == False
+    assert not is_date_not_already_past(date_in_past)
 
 
 def test_should_true_for_date_in_future():
@@ -30,7 +30,7 @@ def test_should_true_for_date_in_future():
     """
 
     date_in_future = tomorrow
-    assert is_date_not_already_past(date_in_future) == True
+    assert is_date_not_already_past(date_in_future)
 
 
 def test_find_club_with_mail(clubs):
@@ -46,8 +46,8 @@ def test_find_club_with_mail(clubs):
 
 def test_fail_to_find_club_with_bad_mail(clubs):
     invalid_mail = "coincoin@badmail.com"
-    with pytest.raises(ClubNotFoundError) as e_info:
-        club = get_club_by_key(clubs, invalid_mail, "email")
+    with pytest.raises(ClubNotFoundError):
+        get_club_by_key(clubs, invalid_mail, "email")
 
 
 def test_find_club_with_name(clubs):
@@ -63,8 +63,8 @@ def test_find_club_with_name(clubs):
 
 def test_fail_to_find_club_with_bad_name(clubs):
     invalid_name = "Iron Maiden"
-    with pytest.raises(ClubNotFoundError) as e_info:
-        club = get_club_by_key(clubs, invalid_name, "name")
+    with pytest.raises(ClubNotFoundError):
+        get_club_by_key(clubs, invalid_name, "name")
 
 
 def test_get_competition(competitions):
@@ -81,7 +81,7 @@ def test_get_competition(competitions):
 def test_fail_to_get_competition_with_invalid_name(competitions):
     invalid_name = "Springfield"
     with pytest.raises(CompetitionNotFoundError):
-        competition = get_competition(competitions, invalid_name)
+        get_competition(competitions, invalid_name)
 
 
 def test_success_to_update_points_or_places():
@@ -145,10 +145,10 @@ def test_should_true_total_places_for_a_competition_less_or_equal_than_twelve():
     competition_name = "Super Smash Force"
     required_places = 5
     result = check_places_number_for_a_competition_and_update(club_places_per_competition,
-                                                            club_name,
-                                                            competition_name,
-                                                            required_places)
-    assert result == True
+                                                              club_name,
+                                                              competition_name,
+                                                              required_places)
+    assert result
 
 
 def test_should_false_total_places_for_a_competition_greater_than_twelve():
@@ -169,4 +169,4 @@ def test_should_false_total_places_for_a_competition_greater_than_twelve():
                                                               club_name,
                                                               competition_name,
                                                               required_places)
-    assert result == False
+    assert not result

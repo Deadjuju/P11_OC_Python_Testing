@@ -48,7 +48,7 @@ def get_competition(competitions_list: list[dict], competition_name: str) -> dic
     for competition in competitions_list:
         if competition['name'] == competition_name:
             return competition
-    message = f"No correspondence with this name."
+    message = "No correspondence with this name."
     raise CompetitionNotFoundError(message)
 
 
@@ -116,7 +116,6 @@ def check_places_number_for_a_competition_and_update(club_places_per_competition
     Returns:
         bool: False if places > 12, else True
     """
-
 
     club_competitions_and_places: dict = club_places_per_competition.get(club_name)
     current_places_competition = club_competitions_and_places.get(competition_name, 0)
