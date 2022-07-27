@@ -31,7 +31,7 @@ def load_competitions():
         # Add a boolean for each competition if it has not yet passed
         for competition in list_of_competitions:
             competition["is_date_not_yet_passed"] = is_date_not_already_past(competition["date"])
-            return list_of_competitions
+        return list_of_competitions
 
 
 app = Flask(__name__)
