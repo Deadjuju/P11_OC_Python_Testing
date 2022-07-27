@@ -34,8 +34,6 @@ def test_log_with_invalid_email(client, mocker, captured_templates, invalid_club
 
     response = client.post(Urls.LOGIN.value, data={"email": invalid_club["email"]})
     template, context = captured_templates[0]
-    print("/" * 500)
-    print(response.data.decode())
 
     assert response.status_code == HTTPStatus.OK
     assert "Sorry, that email wasn&#39;t found." in response.data.decode()
