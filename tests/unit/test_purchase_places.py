@@ -6,16 +6,6 @@ from utils import NegativeResultError
 from tests.conftest import Templates, Urls, mocker_clubs, mocker_competitions
 
 
-club_name = "Simply Lift"
-club_with_many_points_name = "Club With Many Points"
-
-competition = {
-    "name": "Spring Festival",
-    "date": "2020-03-27 10:00:00",
-    "numberOfPlaces": "25"
-}
-
-
 def test_places_required_greater_than_points_club(client, mocker, valid_club, captured_templates, future_competition):
     """
     GIVEN a VALID club, a Valid competition & LARGE number of places,
@@ -42,7 +32,11 @@ def test_places_required_greater_than_points_club(client, mocker, valid_club, ca
     assert template.name == Templates.WELCOME.value
 
 
-def test_places_requested_exceed_places_per_competition(client, mocker, club_with_many_points, captured_templates):
+def test_places_requested_exceed_places_per_competition(client,
+                                                        mocker,
+                                                        club_with_many_points,
+                                                        captured_templates,
+                                                        future_competition):
     """
     GIVEN a VALID club, a Valid competition & number of places > limit per competition,
     WHEN the user tries to access the view route "book()",
@@ -57,7 +51,7 @@ def test_places_requested_exceed_places_per_competition(client, mocker, club_wit
 
     data_to_post = {
         'club': club_with_many_points['name'],
-        'competition': competition['name'],
+        'competition': future_competition['name'],
         'places': places_required,
     }
     response = client.post(Urls.PURCHASE_PLACES.value, data=data_to_post)
@@ -88,14 +82,15 @@ def test_required_places_greater_than_places_available(client,
     future_competition["numberOfPlaces"] = "1"
     places_required = int(future_competition['numberOfPlaces']) + 1
     data_to_post = {
-        'club': club_name,
+        'club': valid_club['name'],
         'competition': future_competition['name'],
         'places': places_required,
     }
 
-    with mocker.patch('server.update_points_or_places',
-                      side_effect=NegativeResultError("Negative values are not allowed")):
-        response = client.post(Urls.PURCHASE_PLACES.value, data=data_to_post)
+    # mocke the error NegativeResultError
+    mocker.patch('server.update_points_or_places',
+                 side_effect=NegativeResultError("Negative values are not allowed"))
+    response = client.post(Urls.PURCHASE_PLACES.value, data=data_to_post)
     template, context = captured_templates[0]
 
     assert response.status_code == HTTPStatus.OK
